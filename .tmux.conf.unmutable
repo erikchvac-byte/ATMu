@@ -20,6 +20,10 @@ unbind-key -n x
 unbind-key -n c
 unbind-key -n &
 unbind-key -n q
+unbind-key -n z      # Disable zoom pane
+unbind-key -n '{'    # Disable swap pane up
+unbind-key -n '}'    # Disable swap pane down
+unbind-key -n Space  # Disable layout toggle
 
 # Disable window management
 unbind-key -n n

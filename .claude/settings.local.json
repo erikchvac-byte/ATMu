@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__ollama-local__list_ollama_models",
+      "Bash(./launch-dashboard.sh:*)",
+      "Bash(command -v:*)",
+      "Bash(tmux:*)",
+      "Bash(echo:*)",
+      "Bash(bash:*)",
+      "Bash(pacman --version:*)",
+      "mcp__ollama-local__analyze_task_complexity"
+    ]
+  }
+}

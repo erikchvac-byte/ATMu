@@ -48,19 +48,31 @@ mux start atmudashboard 2>/dev/null || tmuxinator start atmudashboard
 # If tmuxinator fails, manually create session
 if [ $? -ne 0 ]; then
     echo "Falling back to manual tmux session creation..."
-    
-    # Create session with specific layout
+
+    # Create session with specific layout (200x59 terminal)
     tmux new-session -d -s "$SESSION_NAME" -x 200 -y 59
-    
-    # Split for banner (3 lines top)
-    tmux split-window -t "$SESSION_NAME" -v -p 5
-    
-    # Split bottom pane for 80/20 split
-    tmux split-window -t "$SESSION_NAME:0.1" -h -p 80
-    
+
+    # Split right side: create 66-column pane on the right
+    # -p 33 means keep left at 67%, right pane becomes 33% (~66 cols)
+    tmux split-window -t "$SESSION_NAME:0" -h -p 33
+
+    # Split the right pane (pane 1) vertically into 2 panes
+    # -p 50 splits it 50/50 vertically
+    tmux split-window -t "$SESSION_NAME:0.1" -v -p 50
+
     # Apply unmutable config
     tmux source-file "$HOME/.tmux.conf.unmutable"
-    
-    # Attach
+
+    # Send commands to each pane
+    # Pane 0 (left): banner message
+    tmux send-keys -t "$SESSION_NAME:0.0" "echo '=== ATMU DASHBOARD ===' && echo 'System Ready' && sleep infinity" Enter
+
+    # Pane 1 (top right): code editor
+    tmux send-keys -t "$SESSION_NAME:0.1" "code" Enter
+
+    # Pane 2 (bottom right): system monitor
+    tmux send-keys -t "$SESSION_NAME:0.2" "htop" Enter
+
+    # Attach to session
     tmux attach-session -t "$SESSION_NAME"
 fi
