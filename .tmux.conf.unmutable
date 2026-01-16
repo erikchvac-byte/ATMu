@@ -1,0 +1,65 @@
+# Unmutable Dashboard - Locked tmux configuration
+# This file should be sourced from ~/.tmux.conf after main config
+
+# ==================== LOCK LAYOUT ====================
+
+# Disable all resizing hotkeys
+unbind-key -n M-Left
+unbind-key -n M-Right
+unbind-key -n M-Up
+unbind-key -n M-Down
+unbind-key -n C-Left
+unbind-key -n C-Right
+unbind-key -n C-Up
+unbind-key -n C-Down
+
+# Disable pane splitting/closing
+unbind-key -n %
+unbind-key -n '"'
+unbind-key -n x
+unbind-key -n c
+unbind-key -n &
+unbind-key -n q
+
+# Disable window management
+unbind-key -n n
+unbind-key -n p
+unbind-key -n w
+unbind-key -n f
+
+# Disable mouse interactions
+set -g mouse off
+
+# ==================== PERSISTENT SHELL ====================
+
+# Remain on exit - prevent panes from closing
+set -g remain-on-exit on
+
+# ==================== AESTHETICS (Toggle with variable) ====================
+
+# Uncomment to enable no-border mode
+# set -g pane-border-status off
+# set -g pane-border-format ""
+# set -g window-style "bg=default"
+# set -g pane-active-border-style "bg=default"
+# set -g pane-border-style "bg=default"
+
+# ==================== LOCKED SETTINGS ====================
+
+# Prevent layout changes
+set -g aggressive-resize off
+
+# Lock status bar updates
+set -g status-interval 0
+
+# Disable automatic renumbering
+set -g renumber-windows off
+
+# Prevent session swapping
+unbind-key -n s
+unbind-key -n d
+unbind-key -n }
+
+# Prevent key bindings modifications
+set -g default-command ""
+set -g default-shell /bin/bash

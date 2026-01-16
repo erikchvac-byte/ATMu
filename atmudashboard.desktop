@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=ATMu Dashboard
+Comment=Unmutable 3-Pane Tmux Dashboard
+Exec=bash -c "~/Dev/ATMu/launch-dashboard.sh"
+Icon=utilities-terminal
+Terminal=true
+Categories=System;TerminalEmulator;

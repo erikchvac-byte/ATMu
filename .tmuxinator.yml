@@ -1,0 +1,10 @@
+name: atmudashboard
+root: ~/
+
+windows:
+  - name: main
+    layout: 80,200x59,0,0{133x59,0,0,0 66x59,134,0,1}
+    panes:
+      - echo "=== ATMU DASHBOARD ===" && echo "System Ready" && sleep infinity
+      - code
+      - htop
