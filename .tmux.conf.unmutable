@@ -62,7 +62,7 @@ set -g renumber-windows off
 # Prevent session swapping
 unbind-key -n s
 unbind-key -n d
-unbind-key -n }
+unbind-key -n "}"
 
 # Prevent key bindings modifications
 set -g default-command ""

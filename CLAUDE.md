@@ -74,3 +74,29 @@ When changing layout:
 - `.tmux.conf.unmutable` - Core locked settings (should be installed to `~/.tmux.conf.unmutable`)
 - `.tmuxinator.yml` - Session definition (should be installed to `~/.tmuxinator/atmudashboard.yml`)
 - `atmudashboard.desktop` - Desktop launcher file
+- **`ADR.md`** - Architecture Decision Record (READ THIS FIRST for design context)
+
+## Before Working on This Project
+
+1. **READ [ADR.md](ADR.md) FIRST** - Contains all architectural decisions, testing results, and known issues
+2. **Update ADR.md** after making any architectural changes or before compacting conversations
+3. **Known Issues** are documented in ADR.md - check there before debugging
+
+## Testing
+
+Use the test scripts in the project root:
+- `test-dashboard.sh` - Original comprehensive test suite (has variable expansion issues)
+- `test-final.sh` - Final validation test
+
+Run tests from within WSL:
+```bash
+cd ~/Dev/ATMu
+./test-final.sh
+```
+
+## Known Issues (See ADR.md for details)
+
+1. **Line 65 Syntax Error**: Fixed via `sed -i '65s/unbind-key -n }/unbind-key -n "}"/' ~/.tmux.conf.unmutable`
+2. **Manual Config Loading**: Immutability config must be sourced with `tmux source-file ~/.tmux.conf.unmutable`
+3. **Dimensions**: Actual pane sizes depend on terminal size, may not match 200x59 target
+4. **Test Scripts**: Have bash variable expansion issues when run via `wsl bash -c` (use `wsl bash -l -c` instead)
