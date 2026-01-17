@@ -3,8 +3,8 @@ root: ~/
 
 windows:
   - name: main
-    layout: 80,200x59,0,0{133x59,0,0,0 66x59,134,0,1}
+    layout: 80,200x59,0,0[200x11,0,0,0,200x47,0,12{160x47,0,12,1,39x47,161,12,2}]
     panes:
       - echo "=== ATMU DASHBOARD ===" && echo "System Ready" && sleep infinity
-      - code
+      - echo "=== Main Panel: Code Editor Area ===" && bash
       - htop

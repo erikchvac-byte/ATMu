@@ -59,23 +59,23 @@ chmod +x install.sh
 ## What You Get
 
 ```
-┌─────────────────────────────┬──────────────┐
-│                             │              │
-│                             │  Pane 1      │
-│        Main Pane            │  (top-right) │
-│         (left)              │              │
-│      133 x 59 cols          ├──────────────┤
-│                             │              │
-│                             │  Pane 2      │
-│                             │ (bottom-rt)  │
-│                             │              │
-└─────────────────────────────┴──────────────┘
+┌──────────────────────────────────────────────┐
+│        Banner / Status (20% height)          │
+├───────────────────────────────┬──────────────┤
+│                               │              │
+│      Main Work Area           │   Monitor    │
+│      (80% width)              │   (20%)      │
+│                               │              │
+│      Bottom-left LARGE        │   htop or    │
+│                               │   other tool │
+│                               │              │
+└───────────────────────────────┴──────────────┘
 ```
 
 **3 panes in a locked layout:**
-- Left: Main working area (~133 columns)
-- Right top: Monitoring/logs (~66 columns)
-- Right bottom: Secondary tools (~66 columns)
+- Top: Banner/status bar (20% height, full width)
+- Bottom-left: Main working area (80% height, 80% width) - LARGE
+- Bottom-right: System monitor (80% height, 20% width) - Small
 
 ## Features
 

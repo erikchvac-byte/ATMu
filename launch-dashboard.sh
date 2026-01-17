@@ -17,12 +17,6 @@ for arg in "$@"; do
     esac
 done
 
-# Check for tmuxinator
-if ! command -v mux &> /dev/null && ! command -v tmuxinator &> /dev/null; then
-    echo "Error: tmuxinator not found. Install with: gem install tmuxinator"
-    exit 1
-fi
-
 # Check for tmux
 if ! command -v tmux &> /dev/null; then
     echo "Error: tmux not found. Install tmux first."
@@ -49,28 +43,27 @@ mux start atmudashboard 2>/dev/null || tmuxinator start atmudashboard
 if [ $? -ne 0 ]; then
     echo "Falling back to manual tmux session creation..."
 
-    # Create session with specific layout (200x59 terminal)
-    tmux new-session -d -s "$SESSION_NAME" -x 200 -y 59
+    # Create session with 3-pane layout
+    # Start with single pane
+    tmux new-session -d -s "$SESSION_NAME" 'bash'
 
-    # Split right side: create 66-column pane on the right
-    # -p 33 means keep left at 67%, right pane becomes 33% (~66 cols)
-    tmux split-window -t "$SESSION_NAME:0" -h -p 33
+    # Split vertically (top 20% / bottom 80%)
+    tmux split-window -v -t "$SESSION_NAME:0.0" -p 80
 
-    # Split the right pane (pane 1) vertically into 2 panes
-    # -p 50 splits it 50/50 vertically
-    tmux split-window -t "$SESSION_NAME:0.1" -v -p 50
+    # Split the bottom pane horizontally (large left / small right ~20%)
+    tmux split-window -h -t "$SESSION_NAME:0.1" -p 20
 
     # Apply unmutable config
     tmux source-file "$HOME/.tmux.conf.unmutable"
 
     # Send commands to each pane
-    # Pane 0 (left): banner message
+    # Pane 0 (top banner, 20% height): banner message
     tmux send-keys -t "$SESSION_NAME:0.0" "echo '=== ATMU DASHBOARD ===' && echo 'System Ready' && sleep infinity" Enter
 
-    # Pane 1 (top right): code editor
-    tmux send-keys -t "$SESSION_NAME:0.1" "code" Enter
+    # Pane 1 (bottom-left, LARGE): main code editor area
+    tmux send-keys -t "$SESSION_NAME:0.1" "echo '=== Main Panel: Code Editor Area ===' && bash" Enter
 
-    # Pane 2 (bottom right): system monitor
+    # Pane 2 (bottom-right, small ~20% width): system monitor
     tmux send-keys -t "$SESSION_NAME:0.2" "htop" Enter
 
     # Attach to session

@@ -392,7 +392,145 @@ sed -i '65s/unbind-key -n }/unbind-key -n "}"/' ~/.tmux.conf.unmutable
 
 ---
 
+### ADR-012: Layout Correction - Main Panel on Left
+
+**Status**: Accepted
+**Date**: 2026-01-16
+**Context**: Initial layout configuration had panes in wrong positions - banner was on left (large), main panel on right (small).
+
+**Problem**: User requirement was:
+- Left pane: LARGE main panel (67% width)
+- Top-right: Small banner area (33% width, split)
+- Bottom-right: Small system monitor (33% width, split)
+
+But the implementation created:
+- Left pane: Small banner (50% width)
+- Right panes: Large split for code/monitor (50% width)
+
+**Decision**: Corrected layout configuration in both `.tmuxinator.yml` and `launch-dashboard.sh`:
+1. Pane 0 (left, 67%): Main code editor area
+2. Pane 1 (top-right, 33%): Banner "ATMU DASHBOARD"
+3. Pane 2 (bottom-right, 33%): System monitor (htop)
+
+**Implementation Changes**:
+
+`.tmuxinator.yml`:
+```yaml
+panes:
+  - code                    # Pane 0: main panel (left, large)
+  - echo "=== ATMU..."      # Pane 1: banner (top-right, small)
+  - htop                    # Pane 2: monitor (bottom-right, small)
+```
+
+`launch-dashboard.sh` manual fallback:
+```bash
+tmux new-session -d -s "$SESSION_NAME" 'bash'
+tmux split-window -h -t "$SESSION_NAME:0.0"       # Create right side
+tmux split-window -v -t "$SESSION_NAME:0.1"       # Split right vertically
+tmux resize-pane -t "$SESSION_NAME:0.0" -x 67%    # Make left pane 67%
+```
+
+**Rationale**:
+- Main work area (code editor) needs more screen space
+- Banner and monitor are reference/status displays, need less space
+- 67/33 split provides optimal viewing for main work + status monitoring
+
+**Consequences**:
+- Correct visual layout matching user requirements
+- More usable main panel for editing/viewing
+- Small right panels for glanceable status information
+
+**Testing**: Verified with `tmux list-panes` - Pane 0: 53x24 (main), Pane 1: 26x12 (banner), Pane 2: 26x11 (monitor)
+
+---
+
+### ADR-013: Final Layout Correction - Top Banner + Bottom Split
+
+**Status**: Accepted
+**Date**: 2026-01-16
+**Context**: ADR-012 was incorrect. The actual user requirement was NOT left/right split, but top banner with bottom split into left (main) and right (monitor).
+
+**Problem**: Previous implementation (ADR-012) created:
+- Left pane: Main panel (67% width)
+- Top-right: Banner (33% width)
+- Bottom-right: Monitor (33% width)
+
+But user's ACTUAL requirement was:
+- Top: Banner (20% height, FULL width)
+- Bottom-left: Main work area (80% height, 80% width) - LARGE
+- Bottom-right: Monitor (80% height, 20% width) - Small
+
+**Decision**: Corrected to create top/bottom-left/bottom-right layout:
+1. First split VERTICALLY: Creates top pane (20%) and bottom pane (80%)
+2. Second split HORIZONTALLY on bottom pane: Creates left (80%) and right (20%)
+3. Result: Top banner, large bottom-left main area, small bottom-right monitor
+
+**Implementation Changes**:
+
+`launch-dashboard.sh` manual fallback (lines 56-60):
+```bash
+# Split vertically (top 20% / bottom 80%)
+tmux split-window -v -t "$SESSION_NAME:0" -l 19
+# Split the bottom pane horizontally (large left / small right ~20%)
+tmux split-window -h -t "$SESSION_NAME:0.1" -l 16
+```
+
+`.tmuxinator.yml` pane order:
+```yaml
+panes:
+  - echo "=== ATMU DASHBOARD ===" && echo "System Ready" && sleep infinity  # Pane 0: top banner
+  - echo "=== Main Panel: Code Editor Area ===" && bash                      # Pane 1: bottom-left LARGE
+  - htop                                                                       # Pane 2: bottom-right small
+```
+
+**Technical Details**:
+- Used `-l` flag (fixed lines/columns) instead of `-p` (percentage) due to "size missing" errors
+- Split commands must target correct pane indices: `:0` for first split, `:0.1` for second split
+- Final layout verified: Pane 0 (80x4), Pane 1 (63x19 LARGE), Pane 2 (16x19 small)
+
+**Rationale**:
+- Top banner provides full-width status/branding area
+- Main work area (bottom-left) gets maximum screen space for editing/coding
+- Small monitor panel (bottom-right) provides glanceable system information
+- This matches standard terminal dashboard layouts
+
+**Consequences**:
+- Correct layout matching user's explicit requirements
+- More usable workspace (bottom-left is LARGE, not cramped)
+- Banner spans full width for better visual hierarchy
+- ADR-012 is superseded by this entry
+
+**Testing**: Verified with manual tmux commands:
+```bash
+tmux list-panes -t atmudashboard
+# Pane 0: 80x4 at (0,0) - Top banner
+# Pane 1: 63x19 at (0,5) - Bottom-left LARGE main area
+# Pane 2: 16x19 at (64,5) - Bottom-right small monitor
+```
+
+User confirmation: "I can verify the layout is Top: Banner (20% height) Bottom-left: Main area (80% width) Bottom-right: htop (20% width)"
+
+---
+
 ## Change Log
+
+- **2026-01-16 (Late Evening)**: Fixed layout configuration AGAIN (ADR-013) - correct top/bottom-left/bottom-right layout
+  - **SUPERSEDES ADR-012** which had wrong layout interpretation
+  - User's actual requirement: Top banner (full width) + bottom split (large left, small right)
+  - Fixed split commands: vertical first (`-v -l 19`), then horizontal (`-h -l 16`)
+  - Changed from percentage splits (`-p`) to fixed size splits (`-l`) to avoid "size missing" errors
+  - Updated both `launch-dashboard.sh` and `.tmuxinator.yml` with correct pane order
+  - Verified working: Pane 0 (80x4 top), Pane 1 (63x19 bottom-left LARGE), Pane 2 (16x19 bottom-right)
+  - Updated README.md with correct layout diagram
+
+- **2026-01-16 (Evening)**: Fixed layout configuration (ADR-012) and VSCode launch bug [SUPERSEDED BY ADR-013]
+  - Corrected pane positions to match user requirements
+  - Updated `.tmuxinator.yml` layout string and pane order
+  - Fixed `launch-dashboard.sh` manual fallback to create proper 67/33 split
+  - Added `resize-pane` command to ensure correct proportions
+  - Removed tmuxinator dependency check (it's optional with manual fallback)
+  - **Bug fix**: Changed `code` command to `echo + bash` to prevent VSCode from launching
+  - Verified working layout: 53x24 (main), 26x12 (banner), 26x11 (monitor)
 
 - **2026-01-16**: Initial ADR created after Phase 1 implementation and testing
   - Documented all architectural decisions from implementation

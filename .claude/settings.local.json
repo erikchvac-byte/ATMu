@@ -11,7 +11,10 @@
       "mcp__ollama-local__analyze_task_complexity",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Add Phase 1 implementation with fixes and documentation\n\n- Fix manual fallback layout in launch-dashboard.sh \\(correct 67-33 split\\)\n- Add missing unbinds to .tmux.conf.unmutable \\(swap, zoom, layout toggle\\)\n- Add comprehensive project documentation \\(@prd.md, plan.md, notes.md\\)\n- Add installation guide \\(INSTALL.md\\) for WSL setup\n- Add CLAUDE.md project instructions for AI assistance\n- Add install.sh automation script\n- Document exploration findings and fixes in notes.md\n\nPhase 1 core functionality is now complete and ready for WSL testing.\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git -C \"c:\\\\Users\\\\erikc\\\\Dev\\\\ATMu\" status)",
-      "Bash(git -C \"c:\\\\Users\\\\erikc\\\\Dev\\\\ATMu\" add -A)"
+      "Bash(git -C \"c:\\\\Users\\\\erikc\\\\Dev\\\\ATMu\" add -A)",
+      "Bash(git -C \"c:\\\\Users\\\\erikc\\\\Dev\\\\ATMu\" log -1 --format='%an %ae')",
+      "Bash(git -C \"c:\\\\Users\\\\erikc\\\\Dev\\\\ATMu\" commit -m \"$\\(cat <<''EOF''\ndocs: Add comprehensive documentation and ADR system\n\n- Create README.md with quick start guide and feature overview\n- Create session-handoff.md for developer context and next steps\n- Create ADR.md documenting 11 architectural decisions\n- Create .claude/pre-compact-checklist.md for conversation compaction workflow\n- Fix syntax error in .tmux.conf.unmutable \\(line 65 escaping\\)\n- Update CLAUDE.md with ADR references and known issues\n- Add .claude/settings.json for project configuration\n\nThis completes Phase 1 documentation and establishes ADR practice\nfor preserving architectural context across conversation compactions.\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git -C \"c:\\\\Users\\\\erikc\\\\Dev\\\\ATMu\" push)"
     ]
   }
 }
